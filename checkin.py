@@ -11,8 +11,25 @@ BASE = "https://glados.rocks/api/user"
 
 
 def request(path, payload=None):
+    # 兼容三种输入：
+    #   1) 纯 JWT 串: eyJ...
+    #   2) 单个 koa:sess 字段: koa:sess=eyJ...;
+    #   3) 完整 Cookie 头: koa:sess=eyJ...; koa:sess.sig=...; ...
+    cookie_value = COOKIE.strip()
+    if cookie_value.startswith("koa:sess=") and ";" in cookie_value:
+        # 已经是 cookie 头，按原样使用
+        pass
+    elif cookie_value.startswith("koa:sess="):
+        # 只有一个字段但有等号
+        pass
+    elif cookie_value.startswith("eyJ"):
+        cookie_value = f"koa:sess={cookie_value}"
+    else:
+        # 兜底：当作纯 JWT
+        cookie_value = f"koa:sess={cookie_value}"
+
     headers = {
-        "Cookie": COOKIE if COOKIE.startswith("koa:sess") else f"koa:sess={COOKIE}",
+        "Cookie": cookie_value,
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                       "AppleWebKit/537.36 (KHTML, like Gecko) "
                       "Chrome/126.0.0.0 Safari/537.36",
