@@ -7,6 +7,11 @@ COOKIE = os.environ.get("GLADOS_COOKIE", "").strip()
 if not COOKIE:
     sys.exit("错误: 未设置 GLADOS_COOKIE 环境变量")
 
+# 调试输出：便于排查 Secret 是否正确
+print(f"[调试] Cookie 长度: {len(COOKIE)} 字符")
+print(f"[调试] Cookie 开头: {COOKIE[:30]}...")
+print(f"[调试] Cookie 结尾: ...{COOKIE[-20:]}")
+
 BASE = "https://glados.rocks/api/user"
 
 
