@@ -1,0 +1,24 @@
+name: GLaDOS 每日签到
+
+on:
+  schedule:
+    # 每天北京时间 09:00（UTC 01:00）执行
+    - cron: "0 1 * * *"
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: 执行签到
+        env:
+          GLADOS_COOKIE: ${{ secrets.GLADOS_COOKIE }}
+        run: python checkin.py
